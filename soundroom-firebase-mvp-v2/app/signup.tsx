@@ -1,0 +1,6 @@
+
+import { useState } from 'react'; import { ScrollView, Text, Alert } from 'react-native'; import { theme } from '@/lib/theme'; import { Field } from '@/components/Field'; import { auth } from '@/lib/firebase'; import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+export default function Signup(){ const [email,setEmail]=useState(''); const [pass,setPass]=useState(''); const submit=async()=>{ try{ await createUserWithEmailAndPassword(auth,email.trim(),pass); Alert.alert('Welcome','Account created and signed in.'); } catch(e:any){ if(e.code==='auth/email-already-in-use'){ await signInWithEmailAndPassword(auth,email.trim(),pass); Alert.alert('Welcome back','Signed in.'); } else { Alert.alert('Auth error', e.message); } } };
+return (<ScrollView style={{backgroundColor:theme.bg,padding:16}}><Text style={{color:theme.text,fontSize:24,fontWeight:'800',marginBottom:8}}>Sign up / Sign in</Text>
+<Field label="Email" value={email} onChangeText={setEmail} placeholder="you@example.com"/><Field label="Password" value={pass} onChangeText={setPass} placeholder="••••••••" secureTextEntry/>
+<Text onPress={submit} style={{color:theme.neon,marginTop:12}}>Continue</Text></ScrollView>); }

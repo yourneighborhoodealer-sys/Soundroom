@@ -1,0 +1,5 @@
+
+import { useEffect, useState } from 'react'; import { ScrollView, Text, View } from 'react-native'; import { theme } from '@/lib/theme'; import { Card } from '@/components/Card'; import { useRouter } from 'expo-router'; import seed from '@/data/seed.json'; import { db } from '@/lib/firebase'; import { collection, getDocs, limit, query } from 'firebase/firestore';
+export default function Discover(){ const router=useRouter(); const [artists,setArtists]=useState<any[]>(seed.artists); useEffect(()=>{(async()=>{try{const snap=await getDocs(query(collection(db,'artists'),limit(20))); const list=snap.docs.map(d=>({handle:d.id,...d.data()})); if(list.length) setArtists(list);}catch{}})();},[]);
+return (<ScrollView style={{backgroundColor:theme.bg,padding:16}}><Text style={{color:theme.text,fontSize:22,fontWeight:'800',marginBottom:12}}>Trending Artists</Text>
+{artists.map(a=>(<View key={a.handle} style={{marginBottom:12}}><Card title={a.displayName} subtitle={`@${a.handle}`} image={a.coverUrl} onPress={()=>router.push(`/artist/${a.handle}`)} /></View>))}</ScrollView>); }

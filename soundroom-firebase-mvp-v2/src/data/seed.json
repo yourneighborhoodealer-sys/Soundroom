@@ -1,0 +1,57 @@
+{
+  "artists": [
+    {
+      "handle": "stephhh",
+      "displayName": "Stephhh",
+      "bio": "Alt-pop/R&B. Neon moods. Houston.",
+      "avatarUrl": "https://picsum.photos/seed/ava1/400/400",
+      "coverUrl": "https://picsum.photos/seed/cov1/1200/600",
+      "themeColor": "#22D3EE",
+      "drops": [
+        {
+          "id": "drop1",
+          "title": "Midnight Demo",
+          "description": "Unreleased chorus idea.",
+          "art": "https://picsum.photos/seed/cover1/800/800",
+          "createdAt": 1710000000,
+          "tracks": [
+            {
+              "id": "t1",
+              "title": "Midnight (demo v2)",
+              "url": "https://archive.org/download/testmp3testfile/mpthreetest.mp3"
+            }
+          ]
+        }
+      ],
+      "tiers": [
+        {
+          "id": "tier1",
+          "name": "Backstage",
+          "price": 5,
+          "perks": [
+            "Exclusive posts",
+            "Snippets",
+            "Fan polls"
+          ]
+        },
+        {
+          "id": "tier2",
+          "name": "Soundcheck",
+          "price": 10,
+          "perks": [
+            "Full unreleased drops",
+            "Listening parties"
+          ]
+        },
+        {
+          "id": "tier3",
+          "name": "All-Access VIP",
+          "price": 20,
+          "perks": [
+            "Everything + AMAs + Merch presales"
+          ]
+        }
+      ]
+    }
+  ]
+}

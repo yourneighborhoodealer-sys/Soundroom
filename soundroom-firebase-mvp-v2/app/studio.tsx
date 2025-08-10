@@ -1,0 +1,25 @@
+
+import { useEffect, useState } from 'react'; import { ScrollView, Text, TextInput, View, Pressable, Alert, Image } from 'react-native'; import { theme } from '@/lib/theme'; import { auth, db, storage } from '@/lib/firebase'; import { useLocalSearchParams } from 'expo-router'; import { collection, doc, getDocs, setDoc } from 'firebase/firestore'; import * as ImagePicker from 'expo-image-picker'; import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+export default function Studio(){ const params=useLocalSearchParams(); const [handle,setHandle]=useState(String(params.handle||'')); const [tiers,setTiers]=useState<any[]>([]);
+const [tierName,setTierName]=useState('Soundcheck'); const [tierPrice,setTierPrice]=useState('10'); const [tierPerks,setTierPerks]=useState('Full unreleased drops; Listening parties');
+const [dropTitle,setDropTitle]=useState('Find a Way (demo)'); const [dropDesc,setDropDesc]=useState('Late-night idea.'); const [art,setArt]=useState<string|null>(null); const [audio,setAudio]=useState<string|null>(null);
+useEffect(()=>{(async()=>{ try{const snap=await getDocs(collection(db,'artists',handle,'tiers')); const list=snap.docs.map(d=>({id:d.id,...d.data()})); setTiers(list);}catch{} })();},[handle]);
+const ensure=()=>{ if(!auth.currentUser){Alert.alert('Sign in required','Please sign in first.'); return false;} if(!handle){Alert.alert('Missing handle','Open Studio from your artist page.'); return false;} return true; };
+const saveTier=async()=>{ if(!ensure()) return; const id=tierName.toLowerCase().replace(/\s+/g,'-'); await setDoc(doc(db,'artists',handle,'tiers',id),{name:tierName,price:Number(tierPrice),perks:tierPerks.split(';').map(p=>p.trim())}); Alert.alert('Tier saved',tierName); };
+const pickImage=async()=>{ const res=await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.Images,quality:0.8}); if(!res.canceled && res.assets?.[0]?.uri) setArt(res.assets[0].uri); };
+const pickAudio=async()=>{ const res=await ImagePicker.launchImageLibraryAsync({mediaTypes:ImagePicker.MediaTypeOptions.All,quality:1}); if(!res.canceled && res.assets?.[0]?.uri) setAudio(res.assets[0].uri); };
+const upload=async(local:string,path:string)=>{ const resp=await fetch(local); const blob=await resp.blob(); const r=ref(storage,path); await uploadBytes(r,blob); return await getDownloadURL(r); };
+const createDrop=async()=>{ if(!ensure()) return; if(!audio){Alert.alert('Pick audio','Select an audio file.'); return;} const id=`drop_${Date.now()}`; const artUrl=art? await upload(`artists/${handle}/drops/${id}/art.jpg`,`artists/${handle}/drops/${id}/art.jpg`):null; const audioUrl=await upload(audio,`artists/${handle}/drops/${id}/track.mp3`); await setDoc(doc(db,'artists',handle,'drops',id),{title:dropTitle,description:dropDesc,art:artUrl,createdAt:Date.now(),tracks:[{id:`t_${Date.now()}`,title:dropTitle,url:audioUrl}]}); Alert.alert('Drop created',dropTitle); };
+return (<ScrollView style={{backgroundColor:theme.bg,padding:16}}><Text style={{color:theme.text,fontSize:24,fontWeight:'800',marginBottom:8}}>Artist Studio</Text>
+<Text style={{color:theme.subtext,marginBottom:12}}>Manage tiers and create drops for @{handle}.</Text>
+<Text style={{color:theme.text,fontSize:18,fontWeight:'700',marginBottom:8}}>Create / Update Tier</Text>
+<TextInput value={tierName} onChangeText={setTierName} placeholder="Tier name" placeholderTextColor={theme.subtext} style={{backgroundColor:theme.card,color:theme.text,borderRadius:12,padding:12,marginBottom:8}}/>
+<TextInput value={tierPrice} onChangeText={setTierPrice} placeholder="Price (USD)" placeholderTextColor={theme.subtext} keyboardType="numeric" style={{backgroundColor:theme.card,color:theme.text,borderRadius:12,padding:12,marginBottom:8}}/>
+<TextInput value={tierPerks} onChangeText={setTierPerks} placeholder="Perks (separate with ; )" placeholderTextColor={theme.subtext} style={{backgroundColor:theme.card,color:theme.text,borderRadius:12,padding:12,marginBottom:8}}/>
+<Pressable onPress={saveTier}><Text style={{color:theme.neon,marginBottom:16}}>Save tier</Text></Pressable>
+<Text style={{color:theme.text,fontSize:18,fontWeight:'700',marginBottom:8}}>Create Drop</Text>
+<TextInput value={dropTitle} onChangeText={setDropTitle} placeholder="Title" placeholderTextColor={theme.subtext} style={{backgroundColor:theme.card,color:theme.text,borderRadius:12,padding:12,marginBottom:8}}/>
+<TextInput value={dropDesc} onChangeText={setDropDesc} placeholder="Description" placeholderTextColor={theme.subtext} style={{backgroundColor:theme.card,color:theme.text,borderRadius:12,padding:12,marginBottom:8}}/>
+<View style={{flexDirection:'row',gap:12,marginBottom:8}}><Pressable onPress={pickImage}><Text style={{color:theme.neon}}>Pick artwork</Text></Pressable><Pressable onPress={pickAudio}><Text style={{color:theme.neon}}>Pick audio</Text></Pressable></View>
+{art? <Image source={{uri:art}} style={{width:'100%',height:140,borderRadius:12,marginBottom:12}}/>:null}
+<Pressable onPress={createDrop}><Text style={{color:theme.accent}}>Create drop</Text></Pressable></ScrollView>); }

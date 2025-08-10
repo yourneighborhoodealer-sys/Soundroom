@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Soundroom",
+    "slug": "soundroom-firebase-mvp-v2",
+    "scheme": "soundroom",
+    "version": "0.4.0",
+    "orientation": "portrait",
+    "newArchEnabled": true,
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0A0A"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.soundroom.firebase.v2",
+      "permissions": [
+        "INTERNET",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "WAKE_LOCK"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0A0A"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-av",
+      "expo-image-picker"
+    ]
+  }
+}
