@@ -1,8 +1,0 @@
-
-import { useEffect, useState } from 'react'; import { useLocalSearchParams, useRouter } from 'expo-router'; import { ScrollView, Text, Image, View, Pressable } from 'react-native'; import { theme } from '@/lib/theme'; import { db } from '@/lib/firebase'; import { doc, getDoc } from 'firebase/firestore'; import seed from '@/data/seed.json';
-export default function ArtistPage(){ const {handle}=useLocalSearchParams(); const [artist,setArtist]=useState<any>(null); const router=useRouter(); useEffect(()=>{(async()=>{ try{const snap=await getDoc(doc(db,'artists',String(handle))); if(snap.exists()) setArtist({handle,...snap.data()});}catch{} if(!artist){ const f=seed.artists.find(a=>a.handle===handle)||seed.artists[0]; setArtist(f);} })();},[handle]);
-if(!artist) return null; return (<ScrollView style={{backgroundColor:theme.bg,padding:16}}>{artist.coverUrl? <Image source={{uri:artist.coverUrl}} style={{width:'100%',height:160,borderRadius:12,marginBottom:12}}/>:null}
-<View style={{flexDirection:'row',alignItems:'center',gap:12,marginBottom:8}}>{artist.avatarUrl? <Image source={{uri:artist.avatarUrl}} style={{width:64,height:64,borderRadius:999}}/>:null}
-<View><Text style={{color:theme.text,fontSize:22,fontWeight:'800'}}>{artist.displayName}</Text><Text style={{color:theme.subtext}}>@{artist.handle}</Text></View></View>
-<Text style={{color:theme.subtext,marginBottom:12}}>{artist.bio}</Text>
-<View style={{flexDirection:'row',gap:12,marginBottom:12}}><Pressable onPress={()=>router.push(`/artist/${artist.handle}/tiers`)}><Text style={{color:theme.neon}}>Membership</Text></Pressable><Pressable onPress={()=>router.push(`/studio?handle=${artist.handle}`)}><Text style={{color:theme.neon}}>Studio</Text></Pressable></View></ScrollView>); }

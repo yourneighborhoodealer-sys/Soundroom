@@ -1,8 +1,0 @@
-
-rules_version = '2'; service cloud.firestore { match /databases/{database}/documents {
-match /users/{uid} { allow read, write: if request.auth != null && request.auth.uid == uid; }
-match /artists/{handle} { allow read: if true; allow create, update, delete: if request.auth != null && request.resource.data.ownerUid == request.auth.uid; }
-match /artists/{handle}/tiers/{tierId} { allow read: if true; allow write: if request.auth != null; }
-match /artists/{handle}/drops/{dropId} { allow read: if true; allow write: if request.auth != null; }
-match /subscriptions/{subId} { allow read, write: if request.auth != null && (request.auth.uid == request.resource.data.uid || request.auth.uid == resource.data.uid); }
-match /parties/{room} { allow read: if true; allow write: if request.auth != null; } } }
